@@ -1,6 +1,4 @@
-/*
- * Copyright (c) 2017. Phasmid Software
- */
+// RandomWalk.java
 
 package edu.neu.coe.info6205.randomwalk;
 
@@ -20,12 +18,8 @@ public class RandomWalk {
      * @param dy the distance he moves in the y direction
      */
     private void move(int dx, int dy) {
-        // TO BE IMPLEMENTED  do move
-
-
-        // SKELETON
-         throw new RuntimeException("Not implemented");
-        // END SOLUTION
+        x += dx;
+        y += dy;
     }
 
     /**
@@ -34,10 +28,9 @@ public class RandomWalk {
      * @param m the number of steps the drunkard takes
      */
     private void randomWalk(int m) {
-        // TO BE IMPLEMENTED 
-
-
-throw new RuntimeException("implementation missing");
+        for (int i = 0; i < m; i++) {
+            randomMove();
+        }
     }
 
     /**
@@ -56,11 +49,7 @@ throw new RuntimeException("implementation missing");
      * @return the (Euclidean) distance from the origin to the current position.
      */
     public double distance() {
-        // TO BE IMPLEMENTED 
-
-        // SKELETON
-         return 0.0;
-        // END SOLUTION
+        return Math.sqrt(x * x + y * y);
     }
 
     /**
@@ -75,19 +64,27 @@ throw new RuntimeException("implementation missing");
         for (int i = 0; i < n; i++) {
             RandomWalk walk = new RandomWalk();
             walk.randomWalk(m);
-            totalDistance = totalDistance + walk.distance();
+            totalDistance += walk.distance();
         }
         return totalDistance / n;
     }
 
     public static void main(String[] args) {
-        if (args.length == 0)
+        if (args.length < 1)
             throw new RuntimeException("Syntax: RandomWalk steps [experiments]");
-        int m = Integer.parseInt(args[0]);
-        int n = 30;
-        if (args.length > 1) n = Integer.parseInt(args[1]);
-        double meanDistance = randomWalkMulti(m, n);
-        System.out.println(m + " steps: " + meanDistance + " over " + n + " experiments");
-    }
 
+        int n = args.length == 2 ? Integer.parseInt(args[1]) : 30; // Default value of n is 30 if not provided
+
+        for (int m = Integer.parseInt(args[0]); m <= 60; m += 10) {
+            System.out.println("For " + m + " steps:");
+            for (int run = 1; run <= 10; run++) {
+                double meanDistance = randomWalkMulti(m, n);
+                System.out.println("  Run " + run + ": " + meanDistance + " over " + n + " experiments");
+            }
+            System.out.println();
+        }
+    }
 }
+
+
+
