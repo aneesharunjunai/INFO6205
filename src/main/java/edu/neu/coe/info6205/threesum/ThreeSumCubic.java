@@ -12,6 +12,7 @@ import java.util.List;
  * This algorithm runs in O(N^3) time.
  */
 class ThreeSumCubic implements ThreeSum {
+
     /**
      * Construct a ThreeSumCubic on a.
      * @param a an array.

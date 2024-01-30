@@ -1,12 +1,12 @@
 package edu.neu.coe.info6205.threesum;
 
-import edu.neu.coe.info6205.util.Benchmark_Timer;
+import edu.neu.coe.info6205.util.Stopwatch;
 import edu.neu.coe.info6205.util.TimeLogger;
 import edu.neu.coe.info6205.util.Utilities;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+
 
 public class ThreeSumBenchmark {
     public ThreeSumBenchmark(int runs, int n, int m) {
@@ -23,27 +23,35 @@ public class ThreeSumBenchmark {
     }
 
     public static void main(String[] args) {
-        new ThreeSumBenchmark(100, 250, 250).runBenchmarks();
-        new ThreeSumBenchmark(50, 500, 500).runBenchmarks();
-        new ThreeSumBenchmark(20, 1000, 1000).runBenchmarks();
-        new ThreeSumBenchmark(10, 2000, 2000).runBenchmarks();
-        new ThreeSumBenchmark(5, 4000, 4000).runBenchmarks();
-        new ThreeSumBenchmark(3, 8000, 8000).runBenchmarks();
-        new ThreeSumBenchmark(2, 16000, 16000).runBenchmarks();
+        new ThreeSumBenchmark(100, 250, 125).runBenchmarks();
+        new ThreeSumBenchmark(50, 500, 250).runBenchmarks();
+        new ThreeSumBenchmark(20, 1000, 500).runBenchmarks();
+        new ThreeSumBenchmark(3, 4000, 2000).runBenchmarks();
+        new ThreeSumBenchmark(2, 6000, 3000).runBenchmarks();
     }
 
     private void benchmarkThreeSum(final String description, final Consumer<int[]> function, int n, final TimeLogger[] timeLoggers) {
-        if (description.equals("ThreeSumCubic") && n > 4000) return;
-        // TO BE IMPLEMENTED 
+        double totalTime = 0;
 
-
-
-
-
-
-
-
-throw new RuntimeException("implementation missing");
+        for (int i = 0; i < this.runs; i++) {
+            int[] inputArray = this.supplier.get();
+            // Start the stopwatch
+            Stopwatch stopwatch = new Stopwatch();
+            try {
+                // Execute the function on the input array
+                function.accept(inputArray);
+            } finally {
+                // Stop the stopwatch and accumulate the elapsed time
+                totalTime += stopwatch.lap();
+                stopwatch.close();
+            }
+        }
+        System.out.println("Benchmark Results for " + description + ":");
+        System.out.println();
+        timeLoggers[0].log(totalTime / this.runs, n);
+        timeLoggers[1].log(totalTime / this.runs, n);
+        System.out.println();
+//    throw new RuntimeException("Not yet implemented");
     }
 
     private final static TimeLogger[] timeLoggersCubic = {
