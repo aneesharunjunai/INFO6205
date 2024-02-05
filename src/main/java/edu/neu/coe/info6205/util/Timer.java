@@ -60,37 +60,36 @@ public class Timer {
      * @return the average milliseconds per repetition.
      */
     public <T, U> double repeat(int n, boolean warmup, Supplier<T> supplier, Function<T, U> function, UnaryOperator<T> preFunction, Consumer<U> postFunction) {
-        // TO BE IMPLEMENTED : note that the timer is running when this method is called and should still be running when it returns.
+        logger.trace("repeat: with " + n + " runs");
 
+        for (int i = 0; i < n; i++) {
+            repeatIteration(warmup, supplier, function, preFunction, postFunction);
+        }
 
+        pause();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // SKELETON
-         return 0;
-        // END SOLUTION
+        return meanLapTime();
     }
+    private <T, U> void repeatIteration(boolean warmup, Supplier<T> supplier, Function<T, U> function, UnaryOperator<T> preFunction, Consumer<U> postFunction) {
+        pause();
 
+        T t = supplier.get();
+        if (preFunction != null) {
+            t = preFunction.apply(t);
+        }
+
+        resume();
+
+        U u = function.apply(t);
+
+        pauseAndLap();
+
+        if (postFunction != null) {
+            postFunction.accept(u);
+        }
+
+        resume();
+    }
     /**
      * Stop this Timer and return the mean lap time in milliseconds.
      *
@@ -213,11 +212,7 @@ public class Timer {
      * @return the number of ticks for the system clock. Currently defined as nano time.
      */
     private static long getClock() {
-        // TO BE IMPLEMENTED 
-
-        // SKELETON
-         return 0;
-        // END SOLUTION
+        return System.nanoTime();
     }
 
     /**
@@ -228,11 +223,7 @@ public class Timer {
      * @return the corresponding number of milliseconds.
      */
     private static double toMillisecs(long ticks) {
-        // TO BE IMPLEMENTED 
-
-        // SKELETON
-         return 0;
-        // END SOLUTION
+        return ticks / 1_000_000.0;
     }
 
     final static LazyLogger logger = new LazyLogger(Timer.class);
