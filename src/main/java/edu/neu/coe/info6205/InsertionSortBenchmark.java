@@ -3,8 +3,6 @@ package edu.neu.coe.info6205;
 import edu.neu.coe.info6205.sort.elementary.InsertionSort;
 import edu.neu.coe.info6205.util.Benchmark_Timer;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -18,34 +16,35 @@ public class InsertionSortBenchmark {
 
         // Loop through array sizes, doubling each time, starting from 450 to under 20,000
         for (int arraySize = 450; arraySize < 20000; arraySize *= 2) {
-            measureSortingPerformance(arraySize, insertionSort, true, false);
-            measureSortingPerformance(arraySize, insertionSort, false, true);
-            measureSortingPerformance(arraySize, insertionSort, false, true, true);
+            measureSortingPerformance(arraySize, insertionSort, false, false, false);
+            measureSortingPerformance(arraySize, insertionSort, true, false, false);
+            measureSortingPerformance(arraySize, insertionSort, false, true, false);
             measureSortingPerformance(arraySize, insertionSort, false, false, true);
         }
     }
 
     private static void measureSortingPerformance(int arraySize, InsertionSort<Integer> sorter,
-                                                  boolean isRandom, boolean isSorted, boolean... isPartiallySorted) {
+                                                  boolean isSorted, boolean isReverse, boolean isPartiallyOrdered) {
         Supplier<Integer[]> supplier = () -> {
             Integer[] array = new Integer[arraySize];
             Random rand = new Random();
 
-            if (isRandom) {
+            if (isSorted) {
                 for (int start = 0; start < arraySize; start++) {
-                    array[start] = rand.nextInt(arraySize);
+                    array[start] = start; // Ordered
+                }
+            } else if (isReverse) {
+                for (int start = 0; start < arraySize; start++) {
+                    array[start] = arraySize - start; // Reverse Ordered
+                }
+            } else if (isPartiallyOrdered) {
+                for (int start = 0; start < arraySize; start++) {
+                    array[start] = rand.nextInt(arraySize); // Partially Ordered
                 }
             } else {
                 for (int start = 0; start < arraySize; start++) {
-                    array[start] = isSorted ? start : arraySize - start; // Ordered or reverse ordered
+                    array[start] = rand.nextInt(arraySize); // Random
                 }
-                if (isSorted) Arrays.sort(array);
-                if (isPartiallySorted.length > 0 && isPartiallySorted[0]) {
-                    for (int start = 0; start < arraySize / 2; start++) {
-                        array[rand.nextInt(arraySize)] = rand.nextInt(arraySize * 100);
-                    }
-                }
-                if (!isSorted) Arrays.sort(array, Collections.reverseOrder());
             }
 
             return array;
@@ -55,7 +54,7 @@ public class InsertionSortBenchmark {
 
         // Print table row
         System.out.printf("%-20d %-15s %-15.2f %-15.2f %-15.2f%n",
-                arraySize, getConditionString(isRandom, isSorted, isPartiallySorted),
+                arraySize, getConditionString(isSorted, isReverse, isPartiallyOrdered),
                 times[0], times[1], times[2]);
     }
 
@@ -71,7 +70,7 @@ public class InsertionSortBenchmark {
         double max = Double.MIN_VALUE;
 
         for (int i = 0; i < runs; i++) {
-            double time = timer.runFromSupplier(supplier, 10);
+            double time = timer.runFromSupplier(supplier, 5);
             total += time;
             min = Math.min(min, time);
             max = Math.max(max, time);
@@ -84,9 +83,12 @@ public class InsertionSortBenchmark {
         return timings;
     }
 
-    private static String getConditionString(boolean isRandom, boolean isSorted, boolean[] isPartiallySorted) {
-        String condition = isRandom ? "Random" : (isSorted ? "Ordered" : "Reverse Ordered");
-        if (isPartiallySorted.length > 0 && isPartiallySorted[0]) condition = "Partially " + condition;
-        return condition;
+    private static String getConditionString(boolean isSorted, boolean isReverse, boolean isPartiallyOrdered) {
+        if (isSorted) return "Ordered";
+        if (isReverse) return "Reverse Ordered";
+        if (isPartiallyOrdered) return "Partially Ordered";
+        return "Random";
     }
 }
+
+
