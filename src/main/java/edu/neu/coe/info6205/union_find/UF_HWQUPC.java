@@ -61,7 +61,6 @@ public class UF_HWQUPC implements UF {
             System.out.printf("%d: %d, %d\n", i, parent[i], height[i]);
         }
     }
-
     /**
      * Returns the number of components.
      *
@@ -70,7 +69,6 @@ public class UF_HWQUPC implements UF {
     public int components() {
         return count;
     }
-
     /**
      * Returns the component identifier for the component containing site {@code p}.
      *
@@ -80,18 +78,20 @@ public class UF_HWQUPC implements UF {
      */
     public int find(int p) {
         validate(p);
+
         int root = p;
-        // TO BE IMPLEMENTED 
+        while (root != parent[root]) {
+            root = parent[root];
+        }
 
+        if (pathCompression) {
+            doPathCompression(p);
+        }
 
-
-
-
-throw new RuntimeException("implementation missing");
+        return root;
     }
-
     /**
-     * Returns true if the the two sites are in the same component.
+     * Returns true if the two sites are in the same component.
      *
      * @param p the integer representing one site
      * @param q the integer representing the other site
@@ -141,7 +141,6 @@ throw new RuntimeException("implementation missing");
                 "\n  heights: " + Arrays.toString(height);
     }
 
-    // validate that p is a valid index
     private void validate(int p) {
         int n = parent.length;
         if (p < 0 || p >= n) {
@@ -173,25 +172,24 @@ throw new RuntimeException("implementation missing");
     private boolean pathCompression;
 
     private void mergeComponents(int i, int j) {
-        // TO BE IMPLEMENTED  make shorter root point to taller one
+        if (i == j) return; // No need to merge if they are already in the same component
 
-
-
-
-
-
-
-        // SKELETON
-        // END SOLUTION
+        if (height[i] < height[j]) {
+            parent[i] = j;
+            height[j] += height[i];
+        } else {
+            parent[j] = i;
+            height[i] += height[j];
+        }
     }
-
     /**
      * This implements the single-pass path-halving mechanism of path compression
      */
     private void doPathCompression(int i) {
-        // TO BE IMPLEMENTED  update parent to value of grandparent
-
-        // SKELETON
-        // END SOLUTION
+        while (i != parent[i]) {
+            int grandparent = parent[parent[i]];
+            parent[i] = grandparent;
+            i = grandparent;
+        }
     }
 }
