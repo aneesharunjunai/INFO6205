@@ -18,7 +18,9 @@ public class Main {
 
     public static void main(String[] args) {
         processArgs(args);
-        System.out.println("Degree of parallelism: " + ForkJoinPool.getCommonPoolParallelism());
+        int desiredParallelism = 2;
+        ForkJoinPool myPool = new ForkJoinPool(desiredParallelism);
+        System.out.println("Degree of parallelism: " + myPool.getParallelism());
         Random random = new Random();
         int[] array = new int[2000000];
         ArrayList<Long> timeList = new ArrayList<>();
@@ -40,7 +42,7 @@ public class Main {
 
         }
         try {
-            FileOutputStream fis = new FileOutputStream("./src/result.csv");
+            FileOutputStream fis = new FileOutputStream("./src/result3.csv");
             OutputStreamWriter isr = new OutputStreamWriter(fis);
             BufferedWriter bw = new BufferedWriter(isr);
             int j = 0;
